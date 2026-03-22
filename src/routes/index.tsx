@@ -1,87 +1,242 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { z } from 'zod'
 
-export const Route = createFileRoute('/')({ component: App })
+import { useAppForm } from '#/hooks/demo.form'
 
-function App() {
+export const Route = createFileRoute('/')({
+  component: ShowcaseForm,
+})
+
+const accountTypes = [
+  { label: 'Personal', value: 'personal' },
+  { label: 'Business', value: 'business' },
+]
+
+const countries = [
+  { label: 'United States', value: 'US' },
+  { label: 'Canada', value: 'CA' },
+  { label: 'United Kingdom', value: 'UK' },
+]
+
+const schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().min(1, 'Email is required').check(z.email('Invalid email')),
+  accountType: z.string(),
+  companyName: z.string(),
+  taxId: z.string(),
+  country: z.string(),
+  state: z.string(),
+  bio: z.string(),
+  agreeToTerms: z.boolean(),
+})
+
+function ShowcaseForm() {
+  const form = useAppForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      accountType: '',
+      companyName: '',
+      taxId: '',
+      country: '',
+      state: '',
+      bio: '',
+      agreeToTerms: false,
+    },
+    validators: {
+      onBlur: schema,
+    },
+    onSubmit: ({ value }) => {
+      console.log(value)
+      alert(JSON.stringify(value, null, 2))
+    },
+  })
+
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
-      <section className="island-shell rise-in relative overflow-hidden rounded-4xl px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">TanStack Start Base Template</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-(--sea-ink) sm:text-6xl">
-          Start simple, ship quickly.
-        </h1>
-        <p className="mb-8 max-w-2xl text-base text-(--sea-ink-soft) sm:text-lg">
-          This base starter intentionally keeps things light: two routes, clean
-          structure, and the essentials you need to build from scratch.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href="/about"
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-(--lagoon-deep) no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
-          >
-            About This Starter
-          </a>
-          <a
-            href="https://tanstack.com/router"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-(--sea-ink) no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
-          >
-            Router Guide
-          </a>
-        </div>
-      </section>
+    <div
+      className="flex items-center justify-center min-h-screen p-4 text-white"
+      style={{
+        backgroundImage:
+          'radial-gradient(50% 50% at 5% 40%, #90ee90 0%, #006400 70%, #0a1a0a 100%)',
+      }}
+    >
+      <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
+        <h1 className="text-2xl font-bold mb-6">Feature Showcase Form</h1>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          [
-            'Type-Safe Routing',
-            'Routes and links stay in sync across every page.',
-          ],
-          [
-            'Server Functions',
-            'Call server code from your UI without creating API boilerplate.',
-          ],
-          [
-            'Streaming by Default',
-            'Ship progressively rendered responses for faster experiences.',
-          ],
-          [
-            'Tailwind Native',
-            'Design quickly with utility-first styling and reusable tokens.',
-          ],
-        ].map(([title, desc], index) => (
-          <article
-            key={title}
-            className="island-shell feature-card rise-in rounded-2xl p-5"
-            style={{ animationDelay: `${index * 90 + 80}ms` }}
-          >
-            <h2 className="mb-2 text-base font-semibold text-(--sea-ink)">
-              {title}
-            </h2>
-            <p className="m-0 text-sm text-(--sea-ink-soft)">{desc}</p>
-          </article>
-        ))}
-      </section>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+          className="space-y-6"
+        >
+          {/* ── 1. Passthrough props: placeholder, maxLength, disabled ── */}
+          <div className="space-y-1">
+            <p className="text-sm text-green-300 font-semibold uppercase tracking-wide">
+              Passthrough Props Demo
+            </p>
+          </div>
 
-      <section className="island-shell mt-8 rounded-2xl p-6">
-        <p className="island-kicker mb-2">Quick Start</p>
-        <ul className="m-0 list-disc space-y-2 pl-5 text-sm text-(--sea-ink-soft)">
-          <li>
-            Edit <code>src/routes/index.tsx</code> to customize the home page.
-          </li>
-          <li>
-            Update <code>src/components/Header.tsx</code> and{' '}
-            <code>src/components/Footer.tsx</code> for brand links.
-          </li>
-          <li>
-            Add routes in <code>src/routes</code> and tweak visual tokens in{' '}
-            <code>src/styles.css</code>.
-          </li>
-        </ul>
-      </section>
-    </main>
+          <form.AppField name="name">
+            {(field) => (
+              <field.TextField
+                label="Name"
+                placeholder="Enter your full name..."
+                maxLength={50}
+                autoComplete="name"
+              />
+            )}
+          </form.AppField>
+
+          <form.AppField name="email">
+            {(field) => (
+              <field.TextField
+                label="Email"
+                placeholder="you@example.com"
+                className="border-green-400/50"
+              />
+            )}
+          </form.AppField>
+
+          {/* ── 2. Conditional rendering based on another field ── */}
+          <div className="space-y-1 pt-4 border-t border-white/10">
+            <p className="text-sm text-green-300 font-semibold uppercase tracking-wide">
+              Conditional Fields Demo
+            </p>
+          </div>
+
+          <form.AppField name="accountType">
+            {(field) => (
+              <field.Select
+                label="Account Type"
+                values={accountTypes}
+                placeholder="Select account type..."
+              />
+            )}
+          </form.AppField>
+
+          {/* Show company fields only when accountType is "business" */}
+          <form.Subscribe
+            selector={(state) => state.values.accountType}
+            children={(accountType) =>
+              accountType === 'business' ? (
+                <div className="space-y-4 pl-4 border-l-2 border-green-400/40">
+                  <p className="text-xs text-green-200/70">
+                    These fields appear only for Business accounts
+                  </p>
+                  <form.AppField name="companyName">
+                    {(field) => (
+                      <field.TextField
+                        label="Company Name"
+                        placeholder="Acme Corp"
+                      />
+                    )}
+                  </form.AppField>
+                </div>
+              ) : null
+            }
+          />
+
+          {/* ── Multi-field conditional: Tax ID shown only when accountType=business AND country is selected ── */}
+          <form.Subscribe
+            selector={(state) => ({
+              accountType: state.values.accountType,
+              country: state.values.country,
+            })}
+          >
+            {({ accountType, country }) =>
+              accountType === 'business' &&
+              country !== '' && (
+                <div className="space-y-4 pl-4 border-l-2 border-yellow-400/40">
+                  <p className="text-xs text-yellow-200/70">
+                    Tax ID appears only when Account Type is Business AND a
+                    Country is selected (currently: {country})
+                  </p>
+                  <form.AppField name="taxId">
+                    {(field) => (
+                      <field.TextField
+                        label={`Tax ID (${country})`}
+                        placeholder={
+                          country === 'US'
+                            ? 'XX-XXXXXXX'
+                            : country === 'UK'
+                              ? 'GB XXX XXXX XX'
+                              : 'Enter tax ID'
+                        }
+                        maxLength={country === 'US' ? 10 : 15}
+                      />
+                    )}
+                  </form.AppField>
+                </div>
+              )
+            }
+          </form.Subscribe>
+
+          <form.AppField name="country">
+            {(field) => (
+              <field.Select
+                label="Country"
+                values={countries}
+                placeholder="Select a country..."
+              />
+            )}
+          </form.AppField>
+
+          {/* Show state field only when country is "US" */}
+          <form.Subscribe selector={(state) => state.values.country}>
+            {(country) =>
+              country === 'US' && (
+                <form.AppField name="state">
+                  {(field) => (
+                    <field.TextField
+                      label="State"
+                      placeholder="e.g. California"
+                    />
+                  )}
+                </form.AppField>
+              )
+            }
+          </form.Subscribe>
+
+          <form.AppField name="bio">
+            {(field) => (
+              <field.TextArea
+                label="Bio"
+                placeholder="Tell us about yourself..."
+                rows={4}
+                maxLength={300}
+              />
+            )}
+          </form.AppField>
+
+          {/* ── 3. Custom disabled on submit button ── */}
+          <div className="space-y-1 pt-4 border-t border-white/10">
+            <p className="text-sm text-green-300 font-semibold uppercase tracking-wide">
+              Custom Button Disable Demo
+            </p>
+            <p className="text-xs text-green-200/70">
+              Button stays disabled until the form is valid and has been
+              modified
+            </p>
+          </div>
+
+          <div className="flex justify-end">
+            <form.Subscribe
+              selector={(state) => state.canSubmit && state.isDirty}
+            >
+              {(canSubmitAndDirty) => (
+                <form.AppForm>
+                  <form.SubscribeButton
+                    label="Submit"
+                    disabled={!canSubmitAndDirty}
+                  />
+                </form.AppForm>
+              )}
+            </form.Subscribe>
+          </div>
+        </form>
+      </div>
+    </div>
   )
 }
