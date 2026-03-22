@@ -2,9 +2,22 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { useAppForm } from '#/hooks/demo.form'
 
-export const Route = createFileRoute('/demo/form')({
+export const Route = createFileRoute('/demo/form/address')({
   component: AddressForm,
 })
+
+// type FormType = {
+//     fullName: string;
+//     email: string;
+//     address: {
+//         street: string;
+//         city: string;
+//         state: string;
+//         zipCode: string;
+//         country: string;
+//     };
+//     phone: string;
+// };
 
 function AddressForm() {
   const form = useAppForm({
@@ -42,7 +55,7 @@ function AddressForm() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white"
+      className="flex items-center justify-center min-h-screen bg-linear-to-br from-purple-100 to-blue-100 p-4 text-white"
       style={{
         backgroundImage:
           'radial-gradient(50% 50% at 5% 40%, #f4a460 0%, #8b4513 70%, #1a0f0a 100%)',
